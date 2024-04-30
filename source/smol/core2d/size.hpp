@@ -2,12 +2,18 @@
 #define SMOL_CORE2D_SIZE_DEFINED
 
 
+#include <compare>
+
+
 namespace Smol::Core2D
 {
 	// A 2D size represented by two component values.
 	template<typename T>
 	struct Size
 	{
+		friend auto operator<=>(const Size&, const Size&) = default;
+		
+		
 		// Size width.
 		T w;
 		

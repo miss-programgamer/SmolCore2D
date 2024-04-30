@@ -3,6 +3,8 @@
 
 
 #include <cmath>
+#include <numbers>
+#include <compare>
 
 
 namespace Smol::Core2D
@@ -11,6 +13,9 @@ namespace Smol::Core2D
 	template<typename T>
 	struct Vec2
 	{
+		friend auto operator<=>(const Vec2&, const Vec2&) = default;
+		
+		
 		// Horizontal position/offset.
 		T x;
 		
@@ -34,18 +39,29 @@ namespace Smol::Core2D
 		{}
 		
 		
-		// Get the dot product of this vector and another.
-		constexpr T GetDot(const Vec2<T>& other) const
-		{ return { x * other.x + y * other.y }; }
+		// Get a vector rotated by the given angle.
+		inline Vec2 GetRotated(float angle) const
+		{
+			const float sin = std::sin(angle * float(std::numbers::pi) / 180.0f);
+			const float cos = std::cos(angle * float(std::numbers::pi) / 180.0f);
+			return { cos * x - sin * y, sin * x + cos * y };
+		}
 		
 		
 		// Get the length of this vector.
 		constexpr T GetLength() const
-		{ return std::sqrt<T>(x * x + y * y); }
+		{ return std::sqrt(x * x + y * y); }
 		
 		// Get the square of the length of this vector.
 		constexpr T GetLengthSqr() const
 		{ return x * x + y * y; }
+		
+		// Get the normal of this vector.
+		inline Vec2 GetNormal() const
+		{
+			const float length = std::sqrt(x*x + y*y);
+			return Vec2(x / length, y / length);
+		}
 		
 		// Get a tangent by rotating this vector counter-clockwise 90 degrees.
 		constexpr Vec2<T> GetTangentCC() const
@@ -54,7 +70,22 @@ namespace Smol::Core2D
 		// Get a tangent by rotating this vector clockwise 90 degrees.
 		constexpr Vec2<T> GetTangentCW() const
 		{ return { y, -x }; }
+		
+		
+		// Get a vector member value by index.
+		constexpr T operator[](size_t index) const
+		{ return (&x)[index]; }
+		
+		
+		// Get the dot product of this vector and another.
+		static constexpr T Dot(const Vec2<T>& lhs, const Vec2<T>& rhs)
+		{ return { lhs.x * rhs.x + lhs.y * rhs.y }; }
 	};
+	
+	
+	template<typename T>
+	constexpr Vec2<T> operator-(const Vec2<T>& vec)
+	{ return { -vec.x, -vec.y }; }
 	
 	
 	template<typename T>

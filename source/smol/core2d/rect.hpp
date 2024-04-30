@@ -2,6 +2,8 @@
 #define SMOL_CORE2D_RECT_DEFINED
 
 
+#include <compare>
+
 #include "vec2.hpp"
 #include "size.hpp"
 
@@ -12,6 +14,9 @@ namespace Smol::Core2D
 	template<typename T>
 	struct Rect
 	{
+		friend auto operator<=>(const Rect&, const Rect&) = default;
+		
+		
 		// Left bound.
 		T l;
 		
